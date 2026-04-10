@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Notes + SIGReg — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });"></script>
+  <style>
+    .formula-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .algorithm-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      font-family: ui-monospace, monospace;
+      font-size: 0.9rem;
+    }
+    .algorithm-box h4 {
+      margin: 0 0 12px;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      color: var(--link);
+    }
+    .algorithm-box ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .algorithm-box li {
+      margin: 8px 0;
+    }
+    .highlight-box {
+      background: color-mix(in oklab, var(--link) 10%, var(--bg));
+      border-left: 3px solid var(--link);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 10px 10px 0;
+    }
+    .highlight-box p {
+      margin: 0;
+    }
+    .section-divider {
+      text-align: center;
+      margin: 40px 0;
+      color: var(--muted);
+    }
+    .section-divider::before {
+      content: '• • •';
+      letter-spacing: 8px;
+    }
+    pre code {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 0.88rem;
+    }
+    .katex-display {
+      margin: 16px 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>Community Notes + SIGReg <span class="badge">in progress</span></h1>
+    <p class="lead">Enhancing the truth signal on social media through multi-dimensional matrix factorization.</p>
+
+    <div class="btns" style="margin: 24px 0;">
+      <a class="btn" href="https://cn-factor-explorer.streamlit.app" target="_blank" rel="noreferrer noopener">Launch Factor Explorer ↗</a>
+    </div>
+
+    <h2>Why Community Notes Matters for Cognitive Bandwidth</h2>
+
+    <p>We live in an era of information overload. Social media platforms expose us to thousands of claims daily—many misleading, some outright false. The cognitive load of fact-checking every post is unsustainable. This is where <strong>Community Notes</strong> becomes a force multiplier for collective intelligence.</p>
+
+    <p>Rather than relying on centralized fact-checkers (who can't scale) or platform moderation (which introduces bias), Community Notes crowdsources verification from users across the ideological spectrum. The key insight: <em>a note that convinces people who typically disagree is probably closer to truth</em>.</p>
+
+    <div class="highlight-box">
+      <p><strong>Core thesis:</strong> By algorithmically identifying notes that achieve cross-partisan consensus, Community Notes increases the effective cognitive bandwidth of every user on the platform—surfacing reliable information without requiring individual verification effort.</p>
+    </div>
+
+    <h2>The Core Algorithm: Matrix Factorization</h2>
+
+    <p>At its heart, Community Notes uses <strong>matrix factorization</strong>—the same technique behind Netflix recommendations—but inverted for a different purpose. Instead of predicting what content you'll like, it identifies content that transcends tribal preferences.</p>
+
+    <p>Given a sparse ratings matrix $R$ where $R_{ui}$ represents user $u$'s rating of note $i$, we decompose it into latent factors:</p>
+
+    <div class="formula-block">
+      $$\hat{R}_{ui} = \mu + b_u + b_i + \mathbf{p}_u^T \mathbf{q}_i$$
+    </div>
+
+    <p>Where:</p>
+    <ul>
+      <li>$\mu$ = global average rating (baseline helpfulness)</li>
+      <li>$b_u$ = user bias (how generous/harsh user $u$ rates)</li>
+      <li>$b_i$ = note intercept (<strong>this is the helpfulness score</strong>)</li>
+      <li>$\mathbf{p}_u$ = user embedding (latent "polarity" vector)</li>
+      <li>$\mathbf{q}_i$ = note embedding (latent "polarity" vector)</li>
+    </ul>
+
+    <p>The model is trained by minimizing squared error with L2 regularization:</p>
+
+    <div class="formula-block">
+      $$\mathcal{L} = \sum_{(u,i) \in \mathcal{R}} \left( R_{ui} - \hat{R}_{ui} \right)^2 + \lambda \left( \|\mathbf{p}_u\|^2 + \|\mathbf{q}_i\|^2 + b_u^2 + b_i^2 \right)$$
+    </div>
+
+    <h2>Finding "Bridgingness": The Key Innovation</h2>
+
+    <p>Here's where Community Notes diverges from standard recommender systems. In Netflix, the $\mathbf{p}_u^T \mathbf{q}_i$ term <em>helps</em> prediction—it captures taste alignment. In Community Notes, this term captures <strong>political/ideological alignment</strong>, and we want to <em>factor it out</em>.</p>
+
+    <div class="algorithm-box">
+      <h4>Algorithm: Identifying Helpful Notes</h4>
+      <ol>
+        <li>Train matrix factorization on all user-note ratings</li>
+        <li>The note intercept $b_i$ captures helpfulness <em>independent of ideology</em></li>
+        <li>Notes with high $b_i$ are rated helpful across the political spectrum</li>
+        <li>The factor term $\mathbf{p}_u^T \mathbf{q}_i$ absorbs partisan variance</li>
+        <li>Surface notes where $b_i > \tau$ (threshold for "Helpful" status)</li>
+      </ol>
+    </div>
+
+    <p>The mathematical elegance: by explicitly modeling the ideological dimension, the intercept $b_i$ becomes a <strong>debiased helpfulness score</strong>. A note that's loved by conservatives and hated by liberals will have high factor alignment but middling intercept. A note that's genuinely informative to both will have a high intercept regardless of factor alignment.</p>
+
+    <p>This is "bridgingness"—the algorithm identifies notes that <em>bridge</em> ideological divides.</p>
+
+    <h2>The Limitation: One Dimension Isn't Enough</h2>
+
+    <p>The current Community Notes algorithm uses <strong>numFactors = 1</strong>—a single latent dimension. This captures the dominant axis of disagreement (typically left-right political alignment) but misses other important dimensions:</p>
+
+    <ul>
+      <li><strong>Topic expertise</strong>: Medical professionals vs. laypeople on health notes</li>
+      <li><strong>Rating behavior</strong>: Strict vs. lenient raters</li>
+      <li><strong>Regional/cultural factors</strong>: Different priors based on geography</li>
+      <li><strong>Trust networks</strong>: Clusters of users who trust similar sources</li>
+    </ul>
+
+    <p>With 1D embeddings, all these dimensions get collapsed into a single "polarity" score, leading to information loss and potentially unfair note rankings.</p>
+
+    <div class="highlight-box">
+      <p>For a deeper analysis of these limitations and potential failure modes, see <a href="#">my blog post on Community Notes edge cases</a>.</p>
+    </div>
+
+    <h2>Why More Dimensions Are Needed</h2>
+
+    <p>Consider this scenario: a note about vaccine efficacy might be rated helpful by both liberal doctors and conservative doctors, but rated unhelpful by anti-vaccine users across the political spectrum. With 1D factorization, the model conflates medical expertise with political alignment.</p>
+
+    <p>With multi-dimensional embeddings, we can capture:</p>
+
+    <div class="formula-block">
+      $$\mathbf{p}_u^T \mathbf{q}_i = p_u^{(1)} q_i^{(1)} + p_u^{(2)} q_i^{(2)} + \ldots + p_u^{(k)} q_i^{(k)}$$
+    </div>
+
+    <p>Each dimension can learn to represent a different axis of variation:</p>
+    <ul>
+      <li>$p_u^{(1)}, q_i^{(1)}$ → Political alignment</li>
+      <li>$p_u^{(2)}, q_i^{(2)}$ → Domain expertise</li>
+      <li>$p_u^{(3)}, q_i^{(3)}$ → Rating strictness</li>
+    </ul>
+
+    <p>The intercept $b_i$ then captures helpfulness <em>after controlling for multiple confounders</em>—a more robust measure of true note quality.</p>
+
+    <h2>The Challenge: Representation Collapse</h2>
+
+    <p>There's a reason Community Notes uses 1D embeddings: <strong>multi-dimensional embeddings collapse</strong>.</p>
+
+    <p>Without proper regularization, higher-dimensional embeddings tend to:</p>
+    <ul>
+      <li><strong>Correlate</strong>: All dimensions learn the same thing</li>
+      <li><strong>Collapse</strong>: Embeddings cluster in a low-dimensional subspace</li>
+      <li><strong>Degenerate</strong>: Some dimensions go unused entirely</li>
+    </ul>
+
+    <p>Mathematically, the covariance matrix of embeddings becomes rank-deficient:</p>
+
+    <div class="formula-block">
+      $$\text{Cov}(\mathbf{Z}) = \frac{1}{n}\mathbf{Z}^T\mathbf{Z} \approx \mathbf{v}\mathbf{v}^T \quad \text{(rank 1, collapsed)}$$
+    </div>
+
+    <p>When this happens, you've paid the computational cost of higher dimensions without gaining representational power.</p>
+
+    <h2>SIGreg: Sketched Isotropic Gaussian Regularization</h2>
+
+    <p>SIGreg, introduced in the <a href="https://arxiv.org/abs/2404.16945" target="_blank" rel="noreferrer noopener" class="external">LeJEPA paper</a> (Meta AI, 2024), provides an elegant solution: regularize embeddings toward an <strong>isotropic Gaussian distribution</strong>.</p>
+
+    <p>The core idea: if embeddings are isotropically distributed, their covariance matrix equals the identity matrix. We add a penalty for deviation from isotropy:</p>
+
+    <div class="formula-block">
+      $$\mathcal{L}_{\text{SIGreg}} = \lambda \left\| \frac{1}{n}\mathbf{Z}^T\mathbf{Z} - \mathbf{I} \right\|_F^2$$
+    </div>
+
+    <p>Where:</p>
+    <ul>
+      <li>$\mathbf{Z} \in \mathbb{R}^{n \times d}$ = embedding matrix (users or notes)</li>
+      <li>$\mathbf{I} \in \mathbb{R}^{d \times d}$ = identity matrix (isotropic target)</li>
+      <li>$\|\cdot\|_F$ = Frobenius norm</li>
+      <li>$\lambda$ = regularization strength</li>
+    </ul>
+
+    <p>This loss has several desirable properties:</p>
+
+    <div class="algorithm-box">
+      <h4>SIGreg Properties</h4>
+      <ol>
+        <li><strong>Variance preservation</strong>: Diagonal terms ensure each dimension has unit variance</li>
+        <li><strong>Decorrelation</strong>: Off-diagonal terms penalize correlation between dimensions</li>
+        <li><strong>Collapse prevention</strong>: No dimension can go unused without penalty</li>
+        <li><strong>Differentiable</strong>: Integrates cleanly into gradient-based optimization</li>
+      </ol>
+    </div>
+
+    <h2>My Integration</h2>
+
+    <p>I integrated SIGreg into the Community Notes scoring system with the following components:</p>
+
+    <h3>1. SIGRegLoss Module</h3>
+    <p>A new <code>SIGRegLoss</code> class in <code>sigreg_loss.py</code> that computes the regularization loss:</p>
+
+    <pre><code>class SIGRegLoss:
+    def __call__(self, embeddings: torch.Tensor) -> torch.Tensor:
+        n, d = embeddings.shape
+        # Compute empirical covariance (sketch)
+        cov = embeddings.T @ embeddings / n
+        # Frobenius distance from identity
+        return torch.norm(cov - torch.eye(d), p='fro') ** 2</code></pre>
+
+    <h3>2. Modified Training Loop</h3>
+    <p>The total loss becomes:</p>
+
+    <div class="formula-block">
+      $$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{MF}} + \lambda_u \cdot \mathcal{L}_{\text{SIGreg}}(\mathbf{P}) + \lambda_n \cdot \mathcal{L}_{\text{SIGreg}}(\mathbf{Q})$$
+    </div>
+
+    <p>Where $\mathbf{P}$ and $\mathbf{Q}$ are the user and note embedding matrices respectively, with separate regularization strengths $\lambda_u$ and $\lambda_n$.</p>
+
+    <h3>3. Configuration</h3>
+    <pre><code>mf = MatrixFactorization(
+    numFactors=3,           # Multi-dimensional embeddings
+    useSIGReg=True,         # Enable SIGreg
+    sigregLambdaUser=0.01,  # User embedding regularization
+    sigregLambdaNote=0.01,  # Note embedding regularization
+)</code></pre>
+
+    <h3>4. Diagnostic Tools</h3>
+    <p>Isotropy monitoring during training:</p>
+    <pre><code># Isotropy score: 1.0 = perfectly isotropic, 0.0 = collapsed
+score = sigreg.compute_isotropy_score(embeddings)
+
+# Detailed covariance statistics
+stats = sigreg.get_covariance_stats(embeddings)
+# → cov_trace, cov_det, eigenvalue_min/max, condition_number</code></pre>
+
+    <h2>Results and Next Steps</h2>
+
+    <p>With SIGreg enabled, multi-dimensional embeddings maintain meaningful diversity across dimensions. Each dimension captures distinct variance in the rating data, potentially representing different axes of user-note interaction.</p>
+
+    <h3>Extensions in Progress</h3>
+    <ul>
+      <li><strong>Epps-Pulley Test</strong>: Alternative regularizer with $O(n)$ complexity and bounded gradients</li>
+      <li><strong>Random Projection Sketching</strong>: For scaling to very high-dimensional embeddings</li>
+      <li><strong>Interpretability Analysis</strong>: What do the learned dimensions actually represent?</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p><strong>The bigger picture:</strong> Community Notes demonstrates that algorithmic design can enhance collective intelligence. By enabling richer representations through SIGreg, we take a step toward more nuanced, fair, and robust crowd-sourced fact-checking—ultimately expanding our collective cognitive bandwidth.</p>
+    </div>
+
+    <h2>Notebooks</h2>
+    <div class="card-grid">
+      <article class="card">
+        <h3><a href="https://drive.google.com/file/d/1vscsy9n1eP8XnqZ-Tc-ZHp5iG16n4DbY/view" class="external" target="_blank" rel="noreferrer noopener">6-Factor Deep Dive</a></h3>
+        <p>Comprehensive analysis: validates no representation collapse, interprets factor meanings, demonstrates 24-43% brigade resistance, AUC=0.758 humor detection, and K ablation study.</p>
+      </article>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <h2>References</h2>
+    <ul>
+      <li><a href="https://communitynotes.twitter.com/guide/en/under-the-hood/ranking-notes" target="_blank" rel="noreferrer noopener" class="external">Community Notes Algorithm Guide</a></li>
+      <li><a href="https://arxiv.org/abs/2404.16945" target="_blank" rel="noreferrer noopener" class="external">LeJEPA: Latent-Euclidean Joint-Embedding Predictive Architecture (Meta AI, 2024)</a></li>
+      <li><a href="https://github.com/twitter/communitynotes" target="_blank" rel="noreferrer noopener" class="external">Community Notes Open Source Repository</a></li>
+    </ul>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

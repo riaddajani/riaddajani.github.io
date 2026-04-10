@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pet Projects — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <meta name="color-scheme" content="light dark">
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>Pet Projects <span class="badge">educational</span></h1>
+    <p class="lead">Foundational cognitive science and ML models I built from scratch—some from my time at UWaterloo, where I first made the jump into computational cognitive science and machine learning, and others as personal projects I did on my own to deepen my understanding.</p>
+
+    <div class="btns">
+      <a class="btn" href="https://github.com/riaddajani/CogSci-Projects" target="_blank" rel="noreferrer noopener">View Repository ↗</a>
+    </div>
+
+    <h2>Context</h2>
+    <p>Some of these come from PSYCH 420 (Computational Neuroscience) and related coursework at UWaterloo—where I first made the jump from business into computational cognitive science and ML. Others are personal projects I built on my own time to learn concepts I was curious about. In both cases, each notebook was an exercise in understanding one concept deeply enough to implement it—no libraries doing the heavy lifting, just NumPy and matplotlib.</p>
+    <p>They're rough, but they gave me the intuitions I still rely on: how neurons spike, how networks remember, how learning rules converge, how systems stabilize. The <a href="/projects/eeg-signal-processing.html">EEG project</a> was where these pieces first came together into something real.</p>
+
+    <h2>The models</h2>
+
+    <h3>Perceptron</h3>
+    <p>The simplest possible neural classifier. A single unit with a threshold activation and a weight update rule. Learns to separate linearly separable classes—and fails (instructively) on everything else. This was my first "aha" for why depth matters.</p>
+
+    <h3>Delta Rule (LMS)</h3>
+    <p>Error-driven learning: compute the difference between target and output, nudge weights proportionally. Visualizes how a decision boundary converges on 2D data. The gradient descent intuition I built here carried directly into understanding backpropagation.</p>
+
+    <h3>Hodgkin–Huxley</h3>
+    <p>The biophysical model of action potentials—sodium and potassium channel dynamics, membrane capacitance, the works. Simulating this taught me what a neural "signal" actually looks like at the lowest level: not a 0 or 1, but a voltage trajectory shaped by ion kinetics.</p>
+
+    <h3>Hopfield Network</h3>
+    <p>Associative memory as energy minimization. Store patterns as attractors, then watch the network recover them from noisy or partial inputs. The connection to content-addressable memory and modern attention mechanisms became clear only later.</p>
+
+    <h3>Damped Oscillator</h3>
+    <p>A spring-mass system with friction, solved via Euler's method. Straightforward physics, but it built intuition for stability and resonance that shows up everywhere—from neural oscillations to control systems to why some training runs diverge.</p>
+
+    <h3>H&H → PSD → MLP</h3>
+    <p>A pipeline experiment: generate Hodgkin-Huxley spike trains, decompose them with FFT, then train an MLP to reconstruct the signal from its frequency features. This was me trying to connect the biophysical models to the machine learning ones—a signal processing chain from neuron to network.</p>
+
+    <h3>Marr–Hildreth Edge Detection</h3>
+    <p>Laplacian of Gaussian for finding edges via zero-crossings. Classical computer vision from first principles. Implementing this made Marr's levels-of-analysis framework concrete: what the computation is, why it works, and how it's realized.</p>
+
+    <h3>Conv-RNN + RSA</h3>
+    <p>A hybrid convolutional-recurrent network on CIFAR-10, with hyperparameter search and Representational Similarity Analysis. The RSA part was the interesting bit—comparing the network's internal representations to see which layers encode what, borrowing a method straight from cognitive neuroscience.</p>
+
+    <h2>Notebooks</h2>
+    <div class="card-grid">
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/1gNJgb-a3outlV4CSdsOhTr-kihXUWTWP" class="external" target="_blank" rel="noreferrer noopener">Perceptron</a></h3>
+        <p>Activation, threshold, weight update from scratch.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/15IGvpDFvlvCK3vACwhCuxNWKxvl8-ocJ" class="external" target="_blank" rel="noreferrer noopener">Delta Rule (LMS)</a></h3>
+        <p>Error-driven learning on 2D data with decision boundary visualization.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/1yMUAhazYWvxnvKVSoCxo5C_1EXcVK8-I" class="external" target="_blank" rel="noreferrer noopener">Damped Oscillator</a></h3>
+        <p>Spring-mass with friction via Euler's method.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/1zdV1Ti115swFJYeQPJX25u5p6ysvgbI7" class="external" target="_blank" rel="noreferrer noopener">H&H → PSD → MLP</a></h3>
+        <p>Hodgkin-Huxley → FFT decomposition → MLP reconstruction pipeline.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/1teNxGjAGPEMwDNmU6CH0ePDpXAapvJd5" class="external" target="_blank" rel="noreferrer noopener">Marr–Hildreth Edge Detection</a></h3>
+        <p>Laplacian of Gaussian with zero-crossing extraction.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/1057eYs_dWnZSwq_8QyYufTSTt4IcwuRH" class="external" target="_blank" rel="noreferrer noopener">Conv-RNN + RSA</a></h3>
+        <p>Hybrid Conv-RNN on CIFAR-10 with Representational Similarity Analysis.</p>
+      </article>
+    </div>
+
+    <p class="small" style="margin-top: 36px;">2021–2022. UWaterloo coursework and personal projects.</p>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

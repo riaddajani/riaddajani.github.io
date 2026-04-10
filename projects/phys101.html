@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Physics-Informed Video Learning — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>Physics-Informed Video Learning</h1>
+    <p class="lead">Multi-task pretraining and efficient fine-tuning to predict physical properties from video.</p>
+
+    <h2>Overview</h2>
+    <p>Using the <a href="http://phys101.csail.mit.edu/" class="external" target="_blank" rel="noreferrer noopener">Phys101 dataset</a> (objects in motion across ramp, spring, fall, liquid scenarios), this project explores learning physical properties directly from video:</p>
+    <ul>
+      <li><strong>Mass</strong> and <strong>volume</strong> from object metadata</li>
+      <li><strong>Velocity</strong> via optical flow pseudo-labels (normalized px/s)</li>
+      <li><strong>Energy proxy</strong> derived from 0.5·m·v²</li>
+    </ul>
+
+    <h2>Approach</h2>
+    <ol>
+      <li><strong>Self-supervised warmup</strong>: NT-Xent contrastive learning on video clips</li>
+      <li><strong>Multi-task supervised</strong>: Joint regression heads for mass, volume, velocity, energy + material classification</li>
+      <li><strong>Efficient fine-tuning</strong>: LoRA adapters on MobileNetV3 + tiny temporal Transformer</li>
+    </ol>
+
+    <h2>Notebooks</h2>
+    <div class="card-grid">
+      <article class="card">
+        <h3><a href="https://drive.google.com/file/d/1mVCJkcPwuOdCPtvn1BvqSqyYr1u338bh/view" class="external" target="_blank" rel="noreferrer noopener">Multi-Task Pretraining</a></h3>
+        <p>R3D-18 backbone with self-supervised warmup and multi-task regression heads.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://drive.google.com/file/d/13flKWte8lUntOgH7NTdOa8McNcYfcuUZ/view" class="external" target="_blank" rel="noreferrer noopener">LoRA Fine-Tuning</a></h3>
+        <p>MobileNetV3-Small + temporal Transformer with LoRA adapters. AMP mixed precision, velocity caching.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

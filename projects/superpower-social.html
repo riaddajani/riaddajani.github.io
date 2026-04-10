@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Superpower Social — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>Superpower Social</h1>
+    <p class="lead">I co-founded and built <a href="https://superpower.social" class="external" target="_blank" rel="noreferrer noopener">Superpower Social</a> — an AI platform that moderates toxic comments and drafts on-brand replies for paid and organic social media. The platform grew to serve 300+ brands and agencies, blocking millions of harmful comments across Instagram, Facebook, and Shopify.</p>
+
+    <h2>Traction &amp; Impact</h2>
+    <div class="card" style="margin-bottom:16px;">
+      <ul style="margin:0;padding-left:20px;">
+        <li><strong>300+ brands and agencies</strong> onboarded</li>
+        <li><strong>Millions of harmful comments</strong> blocked across paid and organic social</li>
+        <li><strong>~83% reduction</strong> in LLM inference costs through decision-first architecture</li>
+        <li><strong>10x faster</strong> response generation vs. manual workflows</li>
+        <li><strong>24/7 automated moderation</strong> across Instagram, Facebook, and Shopify</li>
+      </ul>
+    </div>
+    <p>Notable brands and agencies I worked with include:</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 20px;">
+      <span class="badge">WestJet</span>
+      <span class="badge">Harman Kardon</span>
+      <span class="badge">Baskin-Robbins</span>
+      <span class="badge">Cloaked</span>
+      <span class="badge">Rare Beauty</span>
+    </div>
+
+    <h2>Overview</h2>
+    <p><a href="https://superpower.social" class="external" target="_blank" rel="noreferrer noopener">Superpower Social</a> is an AI platform that hides toxic comments and drafts on-brand replies for brands running paid-social ads. Brands and agencies connect their Meta ad accounts or social pages, train the AI on their moderation guidelines and brand voice, and scale to 24/7 automated moderation and response generation.</p>
+    <p>The product solves a high-friction problem: brands running Facebook and Instagram ads cannot keep up with the volume of comments—spam, hate, and genuine engagement alike—without sacrificing authenticity or burning hours on manual moderation.</p>
+    <p>As a founder, I worked directly with early users to understand how they decide when and how to respond. These insights shaped the system from the ground up—turning subjective engagement decisions into measurable signals and production-ready pipelines.</p>
+    <p>The result is a real-time interaction engine that combines lightweight predictive modeling with controlled LLM generation to deliver scalable, high-quality responses.</p>
+
+    <h2>Origin</h2>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
+      <div style="flex:1;min-width:280px;">
+        <p>Right after graduating from my Master's, I moved to Toronto and started building Superpower Social out of my co-founder's basement.</p>
+        <p>This was my entire setup—workspace, living space, and everything in between.</p>
+        <p>I operated out of this environment while designing, building, and deploying the first versions of the system, working end-to-end across modeling, infrastructure, and product iteration.</p>
+        <p>The constraint wasn't just technical—it was personal. Every decision had to balance speed, cost, and real user impact. There was no separation between "work" and "life"—the system was built in continuous cycles of building, testing, and refining.</p>
+        <p>This experience shaped how I think about systems:</p>
+        <ul>
+          <li>Prioritize what actually moves the needle</li>
+          <li>Ship fast, observe real behavior, and adapt</li>
+          <li>Build for real constraints, not ideal ones</li>
+        </ul>
+        <p>Superpower Social is the result of that process.</p>
+      </div>
+      <figure style="flex:0 0 280px;margin:0;">
+        <img src="/assets/superpower-basement.jpg" alt="Mattress on the floor next to a desk with monitors in a basement office in Toronto" style="width:100%;border-radius:8px;" />
+        <figcaption style="font-size:0.85rem;color:var(--muted);margin-top:8px;">Living and working out of my co-founder's basement in Toronto while building the first production versions of Superpower Social.</figcaption>
+      </figure>
+    </div>
+
+    <h3>What I Learned</h3>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
+      <figure style="flex:0 0 280px;margin:0;">
+        <img src="/assets/superpower-cofounders.jpg" alt="Riad and co-founders in the basement gym in Toronto" style="width:100%;border-radius:8px;" />
+        <figcaption style="font-size:0.85rem;color:var(--muted);margin-top:8px;">My co-founders and I in our Toronto basement.</figcaption>
+      </figure>
+      <p style="flex:1;min-width:280px;margin:0;">Most of what I learned building Superpower came from getting things wrong first. We over-engineered early versions—adding features "just in case," optimizing systems that shouldn't have existed yet, and building for scale before we had users. The biggest shift was learning to question every requirement ruthlessly, especially the ones that felt obvious. If something couldn't be justified by real user behavior, it got cut.</p>
+    </div>
+    <p>The second thing was that nothing replaces direct contact with users. Early on, we onboarded brands manually—walking them through every step, watching how they actually used the product, and building around their real workflows instead of our assumptions. That unscalable, hands-on work was the highest-leverage thing we did. It taught us what mattered, and more importantly, what didn't.</p>
+    <p>I also learned that speed is only valuable when you're pointed in the right direction. We wasted weeks accelerating features that users never asked for. The discipline became: first, make sure the problem is real. Then, strip the solution down to the smallest thing that works. Only then do you move fast—and only then do you automate. Automating a broken process just scales the dysfunction.</p>
+    <p>The last lesson was about commitment. There were stretches where nothing worked—users churned, the pipeline broke, money was tight. What kept the company alive wasn't a clever strategy, it was the refusal to stop. Startups don't die from competition—they die from founders giving up. Every problem we faced had a solution on the other side of persistence.</p>
+
+    <h2>From Idea to Production System</h2>
+    <p>The system was built iteratively in tight feedback loops with users:</p>
+    <ul>
+      <li>Early versions overused LLMs — too slow and expensive</li>
+      <li>Users needed control + authenticity, not just automation</li>
+      <li>"Good response" had to be learned per creator, not globally defined</li>
+    </ul>
+    <p>These constraints led to a shift from a purely generative system to a decision-first architecture, where generation is only used when it adds value.</p>
+
+    <h2>System Architecture: Real-Time Decision + Generation Pipeline</h2>
+    <p>Superpower uses a two-stage production pipeline designed around real-world constraints (latency, cost, and user trust):</p>
+
+    <h3>1. Real-Time Decision Layer (&le;5ms inference)</h3>
+    <p>Used for both reply prioritization and comment moderation. The key insight was treating every user interaction in the UI—replying, skipping, regenerating a response, hiding, deleting—as implicit signal. The model learns each creator's behavior, preferences, and patterns in their comment management workflow through these actions.</p>
+    <ul>
+      <li>Per-creator logistic regression model trained on 90-day interaction history</li>
+      <li>Online updates via SGD after each user action (reply, skip, regenerate, hide, delete)</li>
+      <li>MiniLM embedding features + behavioral signals from UI interactions</li>
+      <li>Outputs probability of engagement and moderation decisions in real time</li>
+    </ul>
+
+    <h3>2. Controlled Generation Layer (LLM Routing)</h3>
+    <ul>
+      <li>Only high-value interactions are escalated</li>
+      <li>Responses generated via structured, self-improving prompt systems</li>
+      <li>Prompts iterated based on user feedback and observed performance</li>
+    </ul>
+    <p>Reduced LLM usage by ~83% while improving response relevance and maintaining brand voice.</p>
+
+    <h2>Ownership &amp; Startup Execution</h2>
+    <ul>
+      <li>Built and owned the system end-to-end (product → ML → infrastructure → deployment)</li>
+      <li>Balanced speed vs. reliability while shipping continuously to real users</li>
+      <li>Defined success metrics directly from user behavior and feedback</li>
+      <li>Iterated quickly on both model design and product experience</li>
+    </ul>
+    <p>This required operating across:</p>
+    <ul>
+      <li>Applied ML</li>
+      <li>Backend systems</li>
+      <li>Product decision-making</li>
+      <li>User interaction design</li>
+    </ul>
+
+    <h2>Translating User Behavior into Scalable Systems</h2>
+    <p>A key challenge was converting ambiguous human behavior into structured systems:</p>
+    <ul>
+      <li>Modeled creator-specific engagement patterns</li>
+      <li>Translated "should I respond?" into a probabilistic decision framework</li>
+      <li>Designed pipelines that continuously adapt to new data in production</li>
+    </ul>
+    <p>This work sits at the intersection of customer understanding, applied ML, and systems engineering.</p>
+
+    <h2>Additional System Capabilities</h2>
+    <ul>
+      <li><strong>24/7 automated moderation</strong>: Blocks inflammatory, hateful, and spam comments in real time across paid and organic posts</li>
+      <li><strong>Custom brand voice</strong>: AI trained per-brand to match specific communication styles and tone</li>
+      <li><strong>DM automation</strong>: Automated Instagram and Facebook direct message responses with custom rules</li>
+      <li><strong>Analytics &amp; sentiment trends</strong>: Audience sentiment insights across posts and ads</li>
+      <li><strong>Semantic clustering</strong>: UMAP + K-means for organizing comment streams</li>
+      <li><strong>Explainable moderation</strong>: Transparent reasoning for content decisions</li>
+      <li><strong>Content ideation</strong>: LLM-driven suggestions from audience signals</li>
+      <li><strong>Audience intelligence</strong>: Summarization of engagement trends and patterns</li>
+      <li><strong>Native Meta integration</strong>: Direct connection to Facebook and Instagram without requiring Meta Business Suite access</li>
+    </ul>
+
+    <h2>Why It Matters</h2>
+    <p>Superpower Social reflects a broader thesis developed through building the company:</p>
+    <p><strong>High-performing AI systems are not just model-driven—they are feedback-driven systems that integrate human behavior, efficient modeling, and real-world constraints.</strong></p>
+    <p>By combining:</p>
+    <ul>
+      <li>Lightweight predictive models</li>
+      <li>Controlled generation</li>
+      <li>Continuous feedback loops</li>
+    </ul>
+    <p>the system enables scalable, authentic interaction without sacrificing quality or efficiency.</p>
+
+    <h2>Technical Stack</h2>
+    <ul>
+      <li><strong>Frontend:</strong> Vite + React</li>
+      <li><strong>Backend:</strong> Node.js (TypeScript)</li>
+      <li><strong>Database:</strong> PostgreSQL</li>
+      <li><strong>ML Infrastructure:</strong> Distributed microservices (training + inference)</li>
+      <li><strong>Pipeline Design:</strong> Real-time ingestion, online learning, production RAG</li>
+    </ul>
+
+    <h2>Code</h2>
+    <ul>
+      <li><a href="https://github.com/riaddajani/self-improving-prompt" class="external" target="_blank" rel="noreferrer noopener">Self-Improving Prompt</a> — Early implementation of a self-improving prompt optimization loop for LLMs</li>
+      <li><strong>Frontend</strong> — Vite/React dashboard for creators to manage comments, view clusters, and approve AI-drafted replies</li>
+      <li><a href="https://github.com/riaddajani/superpower-backend-interview" class="external" target="_blank" rel="noreferrer noopener">Backend Interview Challenge</a> — Technical assessment I created when hiring developers</li>
+      <li><strong>Backend</strong> — Node/TypeScript API handling social platform integrations, ML microservice orchestration, and real-time webhooks</li>
+    </ul>
+
+    <h2>Demos</h2>
+    <p>Interactive notebooks demonstrating the core ML components.</p>
+    <div class="card-grid">
+      <article class="card">
+        <h3><a href="https://drive.google.com/file/d/1YasbkEAAhCazX3DbGjegkXSc3gpz7OYN/view" class="external" target="_blank" rel="noreferrer noopener">Reply Decision Model</a></h3>
+        <p>MiniLM embeddings + logistic regression for predicting reply-worthy comments. Includes online SGD for concept drift adaptation.</p>
+      </article>
+      <article class="card">
+        <h3><a href="https://colab.research.google.com/drive/1MHqr26LSB3HFsQ2o4f26VRziE5338QiI" class="external" target="_blank" rel="noreferrer noopener">RAG Reply Generation</a></h3>
+        <p>Full pipeline: BLIP image captioning → CLIP/FAISS retrieval → LoRA fine-tuned Phi-3 for brand-aligned responses.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

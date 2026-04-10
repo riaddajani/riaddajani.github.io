@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BrainToken — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>BrainToken <span class="badge">in progress</span></h1>
+    <p class="lead">Neural-to-Text Decoding via JEPA and Perplexity-Guided Learning</p>
+
+    <h2>Abstract</h2>
+    <p>This project implements a novel neural decoding system that translates ECoG brain signals into natural language using a multi-stage architecture combining Joint Embedding Predictive Architecture (JEPA) with perplexity-guided soft prompting. The system leverages pretrained EEG-VJEPA encoders (X-encoder for context, Y-encoder for targets) with a learned predictor module to extract meaningful representations from high-gamma ECoG signals. These representations are projected into soft prompts that condition a frozen large language model (Gemma-2-2B) to generate corresponding text sequences.</p>
+
+    <h2>Key Innovation</h2>
+    <p>The key innovation lies in the <strong>dual-objective training paradigm</strong>:</p>
+    <ol>
+      <li><strong>Perplexity minimization (PP(W))</strong> that optimizes the entire pipeline to produce text-predictive representations, with gradients flowing back through the projection layer, predictor, and both encoders</li>
+      <li><strong>JEPA reconstruction loss</strong> that grounds the predictor in meaningful latent structure</li>
+    </ol>
+    <p>This approach addresses the critical challenge of mode collapse where standard perplexity-only training produces generic prompts that ignore neural input.</p>
+
+    <h2>Dataset & Architecture</h2>
+    <p>Trained on the <strong>Podcast ECoG dataset</strong> (5,130 word epochs from a single subject with 99 channels at 256Hz), the system processes 4-second windows of neural activity through spatiotemporal encoding, achieving trainable parameter counts of ~431M (with 1.6B frozen LLM parameters).</p>
+    <p>The architecture employs automatic mixed precision training, gradient accumulation, and learning rate warmup to ensure stable optimization despite the complex multi-component gradient flow.</p>
+
+    <h2>Significance</h2>
+    <p>The system represents a significant advance in brain-computer interfaces by demonstrating how modern foundation models (both vision transformers for neural signals and language models for generation) can be effectively combined through learnable soft prompting, providing a path toward high-fidelity neural decoding without task-specific supervised datasets.</p>
+
+    <h2>Status</h2>
+    <p>Active development. Training pipeline operational, evaluating on held-out epochs.</p>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

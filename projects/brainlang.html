@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BrainLang — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>BrainLang</h1>
+    <p class="lead">Decoding heard language from fMRI into text-space representations.</p>
+
+    <div class="btns">
+      <a class="btn" href="https://colab.research.google.com/drive/1OElPVCxi56JhvXgFQ_VAY0IrZQFG52Hz" target="_blank" rel="noreferrer noopener">View Notebook ↗</a>
+      <a class="btn" href="/assets/brainlang-report.pdf" target="_blank">Read Report (PDF)</a>
+    </div>
+
+    <h2>What it is</h2>
+    <p>BrainLang explores continuous language decoding from non-invasive fMRI while a subject listens to narrative speech. The v0.1 model uses <strong>UMAP</strong> to reduce dimensionality of voxel time series, a <strong>BiLSTM encoder</strong> (512 units) with <strong>attention</strong>, and a seq2seq-style <strong>language decoder</strong>. Total: 7.5M parameters.</p>
+
+    <h2>Why it matters</h2>
+    <p><em>Enhancing cognitive bandwidth</em> means shortening the path from brain to useful representation. Even imperfect readouts can function as a low-rate channel that bootstraps assistance, communication, or model alignment.</p>
+
+    <h2>Technical notes</h2>
+    <ul>
+      <li><strong>Dataset</strong>: LeBel et al. (2023) natural language fMRI dataset—8 participants listening to 27 stories from The Moth</li>
+      <li><strong>Preprocessing</strong>: UMAP (n_neighbors=50, min_dist=0.1) → StandardScaler → sequence batching</li>
+      <li><strong>Model</strong>: BiLSTM encoder + attention + LSTM decoder with 4,407-word vocabulary</li>
+      <li><strong>Training</strong>: Teacher forcing, batch size 32, early stopping, learning rate reduction</li>
+      <li><strong>Result</strong>: 31.67% token accuracy—captures some phrases but with repetitive outputs</li>
+    </ul>
+
+    <h2>Lessons Learned (v0.1 Failures)</h2>
+    <p>The v0.1 implementation had critical methodological flaws that artificially inflated performance:</p>
+
+    <h3>1. Teacher Forcing at Inference</h3>
+    <p>During prediction, the model was given ground-truth decoder inputs at every step (<code>model.predict([encoder_input, decoder_input])</code>). This means it wasn't actually <em>generating</em> text—just predicting the next word given the correct history. Real generation must be <strong>autoregressive</strong>: predict word 1, feed that prediction back as input for word 2, and so on.</p>
+
+    <h3>2. Validation Leakage</h3>
+    <p>Testing was done on the last 2 samples, which overlapped with the validation set used for early stopping. The model's weights were selected based on performance on these samples, so it was biased to perform well on them. Proper evaluation requires a held-out test set the model never sees during training or checkpoint selection.</p>
+
+    <h3>3. Limited Data</h3>
+    <p>With only 27 story samples across 8 subjects, the model had insufficient data to learn generalizable brain-to-text mappings. The high train/val accuracy divergence (Figure 5 in the report) shows clear overfitting.</p>
+
+    <h2>Status</h2>
+    <p>v0.1 is archived as a learning experience. Current work (v2) focuses on:</p>
+    <ul>
+      <li>Proper autoregressive inference</li>
+      <li>Strict train/val/test splits</li>
+      <li>Contrastive evaluation baselines</li>
+      <li>Comparison with discrete phrase classification (following Tang et al. 2023)</li>
+    </ul>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

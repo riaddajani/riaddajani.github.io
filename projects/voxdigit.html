@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoxDigit — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>VoxDigit</h1>
+    <p class="lead">Fast, tiny, and live spoken-digit recognition with early-exit, few-shot enrollment, and interpretability.</p>
+
+    <div class="btns">
+      <a class="btn" href="https://github.com/riaddajani/FSDD-Digits" target="_blank" rel="noreferrer noopener">View on GitHub ↗</a>
+    </div>
+
+    <h2>What it is</h2>
+    <p>A compact CNN-based system for real-time spoken digit recognition (0-9) that achieves <strong>~99.7% accuracy</strong> on the Free Spoken Digit Dataset while maintaining extremely low latency. The system supports live microphone input, early-exit predictions, and few-shot speaker enrollment—all running efficiently on CPU.</p>
+
+    <h2>Why it matters</h2>
+    <p>This project demonstrates how to build practical, interpretable speech recognition systems that are <em>fast enough</em> and <em>smart enough</em> for real-world use:</p>
+    <ul>
+      <li><strong>Early-exit inference</strong>: Makes confident predictions before utterances complete, reducing perceived latency</li>
+      <li><strong>Few-shot enrollment</strong>: Adapts to new speakers, microphones, languages, or domains in seconds via prototype learning (tested with Arabic)</li>
+      <li><strong>Interpretability</strong>: Shows confusion matrices during training and gradient saliency ("why") during live inference</li>
+      <li><strong>Tiny footprint</strong>: 3-layer CNN + 3-layer MLP runs feature extraction and inference in milliseconds on CPU</li>
+    </ul>
+
+    <h2>Technical approach</h2>
+    <h3>Architecture</h3>
+    <ul>
+      <li><strong>Features</strong>: Fixed-size 64×64 MFCC "images" with dataset-level normalization</li>
+      <li><strong>Model</strong>: 3 Conv layers (BN+ReLU) → MaxPool → 3 Dense layers (BN+ReLU) with dropout</li>
+      <li><strong>Training</strong>: Adadelta optimizer, cross-entropy loss, batch size 64, ~50 epochs</li>
+      <li><strong>Augmentation</strong>: Light time-shift and noise injection for robustness</li>
+    </ul>
+
+    <h3>Key innovations</h3>
+    <ul>
+      <li><strong>Early-exit logic</strong>: During streaming inference, computes features over growing buffers and exits when confidence exceeds threshold for N consecutive checks</li>
+      <li><strong>Prototype head</strong>: Extracts CNN embeddings and stores per-digit prototypes in cosine space; blends CNN probabilities with prototype similarities for hybrid predictions</li>
+      <li><strong>Live interpretability</strong>: Highlights MFCC bands with strongest gradient saliency for predicted class</li>
+      <li><strong>Voice Activity Detection (VAD)</strong>: Intelligent segmentation for robust microphone input</li>
+    </ul>
+
+    <h2>Results</h2>
+    <ul>
+      <li><strong>Test accuracy</strong>: 99.67%</li>
+      <li><strong>Macro F1</strong>: 99.67%</li>
+      <li><strong>Early-exit</strong>: Triggers at p > 0.88 confidence</li>
+      <li><strong>Latency</strong>: Feature extraction + forward pass in milliseconds on CPU</li>
+    </ul>
+
+    <h2>Use cases</h2>
+    <p>This architecture and training pipeline are useful for:</p>
+    <ul>
+      <li>Voice-controlled interfaces requiring digit input (PIN codes, phone numbers)</li>
+      <li>Low-latency spoken digit recognition in resource-constrained environments</li>
+      <li>Few-shot adaptation to new speakers without retraining</li>
+      <li>Educational demonstrations of interpretable audio classification</li>
+    </ul>
+
+    <h2>Features</h2>
+    <ul>
+      <li><strong>Training mode</strong>: Train CNN on FSDD with confusion matrix tracking</li>
+      <li><strong>Evaluation mode</strong>: Test accuracy and F1 on held-out split</li>
+      <li><strong>Live mode</strong>: Real-time microphone input with early-exit and VAD</li>
+      <li><strong>Enrollment mode</strong>: Record your own digits for few-shot prototype adaptation</li>
+      <li><strong>Hybrid inference</strong>: Blend CNN predictions with enrolled prototypes</li>
+    </ul>
+
+    <h2>Technical notes</h2>
+    <ul>
+      <li>Built on well-tested FSDD baselines from <a href="https://github.com/adhishthite/sound-mnist" class="external" target="_blank" rel="noreferrer noopener">sound-mnist</a></li>
+      <li>Uses Hugging Face datasets for FSDD loading</li>
+      <li>Requires PortAudio for microphone input (via sounddevice)</li>
+      <li>All normalization statistics cached for consistency across runs</li>
+      <li>Single Python file implementation for easy experimentation</li>
+    </ul>
+
+    <h2>Status</h2>
+    <p>Complete and functional. Demonstrates production-ready patterns for low-latency, interpretable speech recognition with adaptive enrollment.</p>
+
+    <p class="small"><a href="https://github.com/riaddajani/FSDD-Digits" class="external" target="_blank" rel="noreferrer noopener">View source code on GitHub →</a></p>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

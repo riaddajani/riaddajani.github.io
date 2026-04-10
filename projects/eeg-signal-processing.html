@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EEG Signal Processing — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>EEG Signal Processing <span class="badge">CogSci</span> <span class="badge">BCI</span></h1>
+    <p class="lead">Classifying eyes-open vs eyes-closed from occipital EEG, then moving a mouse cursor with the output. My first attempt at brain-computer interfacing.</p>
+
+    <div class="btns">
+      <a class="btn" href="https://colab.research.google.com/drive/1NNlO9PMZU-9Yol00UQrguqnbPBMzgKFe" target="_blank" rel="noreferrer noopener">View Notebook ↗</a>
+      <a class="btn" href="/assets/eeg-signal-processing-report.pdf" target="_blank">Read Report (PDF)</a>
+    </div>
+
+    <h2>The backstory</h2>
+    <p>In 2022, I was a Global Business & Digital Arts student at UWaterloo who had pivoted hard into cognitive science. I'd spent years thinking about <em>enhancing cognitive bandwidth</em>—making human-computer interaction faster, richer, more intuitive—but I had zero experience with scientific coding, signal processing, or writing academic papers.</p>
+
+    <p>PSYCH 420 (Introduction to Computational Neuroscience) with Dr. Britt Anderson was my crash course. By the end, I wanted to build something that actually touched the brain. This project, co-authored with Wasam Syed, was my first conceptual demo: read brain signals, classify a mental state, do something with it.</p>
+
+    <h2>What we built</h2>
+    <p>A complete (if scrappy) BCI pipeline:</p>
+    <ol>
+      <li><strong>Data</strong>: SPIS resting-state EEG from 20 subjects—recordings from occipital electrodes under two conditions: eyes open and eyes closed</li>
+      <li><strong>Signal processing</strong>: Discrete Fourier Transform → Power Spectral Density extraction at 256 Hz. The alpha band (8-13 Hz) shows clear differences between conditions—eyes closed = stronger alpha</li>
+      <li><strong>Classification</strong>: A multilayer perceptron we wrote from scratch. Sigmoid activations, MSE loss, gradient descent with backpropagation. No PyTorch, no TensorFlow—just numpy and determination</li>
+      <li><strong>Output</strong>: Mouse cursor control via PySimpleGUI. The classifier's prediction moved the cursor. Brain → screen.</li>
+    </ol>
+
+    <h2>Pipeline walkthrough</h2>
+
+    <h3>1. Data extraction &amp; standardization</h3>
+    <p>We pulled raw EEG from the SPIS resting-state dataset (channel 25, 1000 samples at 4 ms resolution). Each condition—eyes closed and eyes open—was mean-centered to remove DC offset, giving us a standardized voltage trace to work with.</p>
+    <figure>
+      <img src="/assets/eeg/standardized-data.png" alt="Standardized EEG data showing eyes-closed (blue) and eyes-open (orange) voltage traces over 1000 time steps" style="max-width:100%;">
+      <figcaption>Standardized EEG signals for eyes-closed (blue) and eyes-open (orange). The raw noise is evident—both conditions overlap heavily in the time domain, motivating frequency-domain analysis.</figcaption>
+    </figure>
+
+    <h3>2. Fourier analysis &amp; denoising</h3>
+    <p>We applied <code>scipy.fftpack.fft</code> to decompose the time-domain signal into frequency components. The raw FFT reveals a dominant low-frequency peak with high-frequency noise spread across the spectrum. We isolated the peak frequency and zeroed out everything above it, then inverse-transformed back to get a filtered signal.</p>
+    <figure>
+      <img src="/assets/eeg/fft-raw.png" alt="Raw FFT of the closed-eyes EEG signal showing dominant low-frequency peak" style="max-width:100%;">
+      <figcaption>Raw FFT of the eyes-closed signal. The large spikes at the edges are the dominant low-frequency components; everything in between is noise.</figcaption>
+    </figure>
+    <figure>
+      <img src="/assets/eeg/fft-filtered.png" alt="Filtered signal after zeroing high-frequency components, showing a clean sinusoidal wave" style="max-width:100%;">
+      <figcaption>Filtered signal after removing high-frequency components. What remains is the dominant oscillation—a clean low-frequency waveform extracted from the noisy EEG.</figcaption>
+    </figure>
+    <figure>
+      <img src="/assets/eeg/fft-frequency-spectrum.png" alt="Frequency spectrum of the filtered signal showing a single peak at the dominant frequency" style="max-width:100%;">
+      <figcaption>Frequency spectrum of the filtered signal. A single sharp peak confirms we've isolated one dominant frequency component.</figcaption>
+    </figure>
+
+    <h3>3. Feature extraction — Power Spectral Density</h3>
+    <p>Using Welch's method (<code>scipy.signal.welch</code>) on the occipital electrode (O1) at 256 Hz sampling rate, we computed the PSD for both conditions. This is where the signal becomes meaningful: the eyes-closed condition shows elevated power in the alpha band (~8–13 Hz), consistent with the well-known alpha suppression effect when eyes open.</p>
+    <figure>
+      <img src="/assets/eeg/psd.png" alt="Power Spectral Density comparison between eyes-closed and eyes-open conditions across 0-40 Hz" style="max-width:100%;">
+      <figcaption>PSD comparison: eyes-closed (blue) vs. eyes-open (orange). The closed condition shows a clear bump around 8–13 Hz (alpha band), while the open condition has relatively lower power in that range. This spectral difference is the feature our classifier exploits.</figcaption>
+    </figure>
+
+    <h3>4. Classification — from-scratch neural network</h3>
+    <p>We built a 2→3→1 multilayer perceptron entirely in NumPy. The input features were the condition mean (as a proxy for signal statistics) and a sample index, normalized to [0,1]. Sigmoid activations, MSE cost function, and manual backpropagation with a learning rate of 3. The learning curve converges quickly—cost drops from 0.5 to near-zero within the first few hundred iterations.</p>
+    <figure>
+      <img src="/assets/eeg/learning-curve.png" alt="Learning curve showing MSE cost decreasing from 0.5 to near-zero over 1000 training iterations" style="max-width:100%;">
+      <figcaption>Learning curve over 1000 epochs. The network converges rapidly—most of the learning happens in the first 200 iterations.</figcaption>
+    </figure>
+
+    <h3>5. Application — simulated BCI output</h3>
+    <p>The trained network maps its binary prediction to a cursor action: eyes open → move up, eyes closed → move down. Here are the results on the training samples:</p>
+    <div class="card" style="font-family:monospace;font-size:0.85rem;white-space:pre-wrap;padding:20px;line-height:1.6;">Sample 1: Input [-0.196, 0.25]  → Output 0.9995 → <strong>Eyes Open</strong>  → Mouse UP
+Sample 2: Input [-0.196, 0.50]  → Output 0.9335 → <strong>Eyes Open</strong>  → Mouse UP
+Sample 3: Input [ 1.00,  0.75]  → Output 0.0363 → <strong>Eyes Closed</strong> → Mouse DOWN
+Sample 4: Input [-1.00,  1.00]  → Output 0.0519 → <strong>Eyes Closed</strong> → Mouse DOWN</div>
+    <p>The raw outputs are well-separated—open predictions cluster near 1.0, closed near 0.0—showing the network learned a clean decision boundary despite the tiny dataset.</p>
+
+    <h2>The paper (and its problems)</h2>
+    <p>This was my first scientific paper. It shows.</p>
+    <ul>
+      <li><strong>We gave up on denoising</strong>: The report literally says we "attempted to denoise the signal using scipy.fft but were struggling with deriving meaningful information out of the denoised signal so opted to use the non-denoised signal." Translation: we tried, got confused, and just... moved on.</li>
+      <li><strong>The conclusion is two sentences</strong>: "Our report shows how powerful a simple implementation of EEG Signal Processing can be. At a higher scale this methodology has many possibilities." That's it. That's the whole conclusion.</li>
+      <li><strong>Half the paper explains what neural networks are</strong>: We spent pages explaining sigmoid functions and backpropagation to... ourselves? The professor? I'm still not sure who the audience was.</li>
+      <li><strong>No proper evaluation metrics</strong>: We didn't report accuracy, precision, recall, or even a confusion matrix. The model "worked" but we had no rigorous way to say how well.</li>
+    </ul>
+
+    <h2>Why it mattered anyway</h2>
+    <p>Despite the rough edges, this project proved something to me: the loop from brain to action is <em>possible</em> with accessible tools. You can:</p>
+    <ul>
+      <li>Read electrical signals from the scalp</li>
+      <li>Extract features that correspond to cognitive states</li>
+      <li>Train a simple model to classify them</li>
+      <li>Close the loop with real-time output</li>
+    </ul>
+
+    <p>The demo was trivial (moving a cursor based on whether someone's eyes were open), but the <em>pattern</em> was the whole point. Enhancing cognitive bandwidth starts with proving you can decode anything at all.</p>
+
+    <h2>What I learned</h2>
+    <ul>
+      <li>The International 10-10 electrode placement system (and why occipital electrodes matter for visual states)</li>
+      <li>How FFT decomposes signals into frequency components</li>
+      <li>Why alpha waves dominate during eyes-closed relaxation</li>
+      <li>How to implement backpropagation by hand (painful but instructive)</li>
+      <li>That scientific writing is a skill I did not yet have</li>
+    </ul>
+
+    <h2>Related work</h2>
+    <p>The <a href="/projects/cogsci-projects.html">foundational models</a> I built in that same period—perceptrons, delta rule, Hodgkin-Huxley simulations—gave me the building blocks to understand what we were doing here. This project was where those pieces came together into something that actually touched the real world.</p>
+
+    <p class="small" style="margin-top: 36px;">April 2022. The paper is embarrassing in hindsight, but it started everything that came after: <a href="/projects/brainlang.html">BrainLang</a>, <a href="/projects/braintoken.html">BrainToken</a>, and the ongoing work at Isik Lab.</p>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>

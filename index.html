@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riad Dajani</title>
+  <meta name="description" content="Riad Dajani — Building AI systems and research to enhance human cognitive bandwidth. VGS @ Isik Lab, Johns Hopkins University.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/styles.css" as="style" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <meta property="og:title" content="Riad Dajani">
+  <meta property="og:description" content="I like to make stuff that gives us all a better chance in the future. Enhancing cognitive bandwidth through AI research and systems.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://riaddajani.github.io/">
+  <meta name="color-scheme" content="light dark">
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Riad Dajani",
+  "url": "https://riaddajani.github.io",
+  "email": "mailto:rdajani2@alumni.jh.edu",
+  "affiliation": {
+    "@type": "Organization",
+    "name": "Isik Lab, Johns Hopkins University"
+  },
+  "jobTitle": "Visiting Graduate Scholar",
+  "sameAs": [
+    "https://www.linkedin.com/in/riaddajani/",
+    "https://x.com/riaddajani",
+    "https://github.com/riaddajani"
+  ]
+}
+  </script>
+  <style>/* tiny progressive enhancement if CSS fails to load via link */ .nojs-hide{display:none}</style>
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="#mission">Mission</a>
+        <a href="#timeline">Journey</a>
+        <a href="#projects">Projects</a>
+        <a href="#extras">Extras</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="mlTracker">
+    <span id="lossValue"></span>
+  </div>
+  <header class="hero-wrapper">
+    <canvas id="lossCanvas" width="800" height="320" aria-label="Loss function convergence animation"></canvas>
+    <div class="container hero">
+      <figure class="profile">
+        <img src="/assets/profile.jpeg" alt="Riad Dajani" loading="eager" decoding="async">
+      </figure>
+      <div class="hero-content">
+        <h1>Riad Dajani</h1>
+        <div class="tagline">Enhancing cognitive bandwidth</div>
+        <div class="btns socials">
+          <a class="btn" href="mailto:rdajani2@jh.edu">Email</a>
+          <a class="btn" href="https://github.com/riaddajani" target="_blank" rel="noreferrer noopener">GitHub ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/riaddajani/" target="_blank" rel="noreferrer noopener">LinkedIn ↗</a>
+          <a class="btn" href="https://x.com/riaddajani" target="_blank" rel="noreferrer noopener">X / Twitter ↗</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    // MLP that learns to track mouse (2→2→2)
+    (function() {
+      const canvas = document.getElementById('lossCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const tracker = document.getElementById('mlTracker');
+      const lossValue = document.getElementById('lossValue');
+      let W, H;
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        W = canvas.width = rect.width * 2;
+        H = canvas.height = rect.height * 2;
+        ctx.scale(2, 2);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const sigmoid = x => 1 / (1 + Math.exp(-Math.max(-10, Math.min(10, x))));
+      let w1 = [[0.1, -0.2], [0.15, 0.1]], w2 = [[0.2, 0.1], [-0.1, 0.3]];
+      let b1 = [0, 0], b2 = [0, 0];
+      let mouseX = 0.5, mouseY = 0.5, predX = 0.5, predY = 0.5, loss = 0;
+
+      document.addEventListener('mousemove', e => {
+        mouseX = e.clientX / window.innerWidth;
+        mouseY = e.clientY / window.innerHeight;
+      });
+
+      function forward(x, y) {
+        const h1 = sigmoid(x * w1[0][0] + y * w1[1][0] + b1[0]);
+        const h2 = sigmoid(x * w1[0][1] + y * w1[1][1] + b1[1]);
+        const o1 = sigmoid(h1 * w2[0][0] + h2 * w2[1][0] + b2[0]);
+        const o2 = sigmoid(h1 * w2[0][1] + h2 * w2[1][1] + b2[1]);
+        return {h: [h1, h2], o: [o1, o2]};
+      }
+
+      function train() {
+        const {h, o} = forward(mouseX, mouseY);
+        const dx = mouseX - o[0], dy = mouseY - o[1];
+        loss = (dx * dx + dy * dy) / 2;
+
+        const lr = 0.1;
+        const dO1 = -dx * o[0] * (1 - o[0]), dO2 = -dy * o[1] * (1 - o[1]);
+
+        w2[0][0] -= lr * dO1 * h[0]; w2[1][0] -= lr * dO1 * h[1];
+        w2[0][1] -= lr * dO2 * h[0]; w2[1][1] -= lr * dO2 * h[1];
+        b2[0] -= lr * dO1; b2[1] -= lr * dO2;
+
+        const dH1 = (dO1 * w2[0][0] + dO2 * w2[0][1]) * h[0] * (1 - h[0]);
+        const dH2 = (dO1 * w2[1][0] + dO2 * w2[1][1]) * h[1] * (1 - h[1]);
+
+        w1[0][0] -= lr * dH1 * mouseX; w1[1][0] -= lr * dH1 * mouseY;
+        w1[0][1] -= lr * dH2 * mouseX; w1[1][1] -= lr * dH2 * mouseY;
+        b1[0] -= lr * dH1; b1[1] -= lr * dH2;
+
+        const pred = forward(mouseX, mouseY);
+        predX = pred.o[0]; predY = pred.o[1];
+      }
+
+      function draw() {
+        train();
+
+        const styles = getComputedStyle(document.documentElement);
+        const bg = styles.getPropertyValue('--bg').trim();
+        const text = styles.getPropertyValue('--text').trim();
+        const accent = styles.getPropertyValue('--link').trim();
+        const muted = styles.getPropertyValue('--muted').trim();
+        const w = W/2, h = H/2;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        const netSize = Math.min(w * 0.8, 500);
+        const netY = h * 0.9;
+        const spacing = 50;
+        const layers = [
+          {x: (w - netSize) / 2 + netSize * 0.15, labels: ['Mouse X', 'Mouse Y']},
+          {x: (w - netSize) / 2 + netSize * 0.5},
+          {x: (w - netSize) / 2 + netSize * 0.85, labels: ['Pred X', 'Pred Y']}
+        ];
+        const {h: hiddenAct} = forward(mouseX, mouseY);
+
+        // Draw connections
+        for (let li = 0; li < 2; li++) {
+          for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+              const weight = li === 0 ? w1[i][j] : w2[i][j];
+              const weightMag = Math.min(Math.abs(weight), 1);
+              ctx.strokeStyle = weight > 0 ? accent : muted;
+              ctx.globalAlpha = weightMag * 0.5;
+              ctx.lineWidth = weightMag * 2;
+              ctx.beginPath();
+              ctx.moveTo(layers[li].x, netY + (i - 0.5) * spacing);
+              ctx.lineTo(layers[li + 1].x, netY + (j - 0.5) * spacing);
+              ctx.stroke();
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+
+        // Draw neurons
+        layers.forEach((layer, li) => {
+          for (let i = 0; i < 2; i++) {
+            const y = netY + (i - 0.5) * spacing;
+            const activation = li === 0 ? (i === 0 ? mouseX : mouseY) :
+                             li === 1 ? hiddenAct[i] : (i === 0 ? predX : predY);
+
+            ctx.beginPath();
+            ctx.arc(layer.x, y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = accent;
+            ctx.globalAlpha = activation * 0.4;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(layer.x, y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = bg;
+            ctx.globalAlpha = 1;
+            ctx.fill();
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = Math.max(activation, 0.3);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+
+            if (li !== 1) {
+              ctx.fillStyle = muted;
+              ctx.font = '9px sans-serif';
+              ctx.textAlign = li === 0 ? 'right' : 'left';
+              ctx.fillText(layer.labels[i], li === 0 ? layer.x - 15 : layer.x + 15, y + 3);
+              ctx.font = 'bold 8px monospace';
+              ctx.textAlign = 'center';
+              ctx.fillStyle = accent;
+              ctx.fillText(activation.toFixed(2), layer.x, y - 14);
+            }
+          }
+        });
+
+        // Layer titles
+        ctx.fillStyle = text;
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Input', layers[0].x, netY - 55);
+        ctx.fillText('Hidden', layers[1].x, netY - 55);
+        ctx.fillText('Output', layers[2].x, netY - 55);
+
+        tracker.style.left = predX * window.innerWidth + 'px';
+        tracker.style.top = predY * window.innerHeight + 'px';
+        lossValue.textContent = loss.toFixed(3);
+
+        requestAnimationFrame(draw);
+      }
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        requestAnimationFrame(draw);
+      }
+    })();
+  </script>
+
+  <main class="container">
+    <section id="mission" class="prose">
+      <h2>Mission</h2>
+      <p>My work centers on <strong>enhancing cognitive bandwidth</strong>—building models and systems that help propel understanding, empathy, and consciousness. I care about <em>useful</em> intelligence: research that translates into tools, and tools that continuously learn from how people actually use them. That mission links everything I build: production ML for human–computer interaction at <a href="/projects/superpower-social.html">Superpower Social</a>, and research on brain/behavior–aligned models at <a class="external" href="https://isiklab.org" target="_blank" rel="noreferrer noopener">Isik Lab</a>.</p>
+    </section>
+
+    <section id="timeline">
+      <h2>Journey</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">2025 - Present</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <img src="/assets/jhu-logo.jpg" alt="JHU" class="timeline-logo">
+              <div class="timeline-title-group">
+                <h3>Visiting Graduate Scholar</h3>
+                <p class="company">Johns Hopkins University</p>
+              </div>
+            </div>
+            <p class="timeline-description">Computational Cognitive Science at Isik Lab, researching brain/behavior-aligned multimodal models and socially intelligent AI systems.</p>
+            <div class="timeline-links">
+              <a href="https://isiklab.org" class="timeline-link external" target="_blank" rel="noreferrer noopener">Isik Lab</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2024 - mid-2025</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <img src="/assets/jhu-logo.jpg" alt="JHU" class="timeline-logo">
+              <div class="timeline-title-group">
+                <h3>Masters Student</h3>
+                <p class="company">Johns Hopkins University</p>
+              </div>
+            </div>
+            <p class="timeline-description">MA in Cognitive Science with focus on machine learning and computational cognitive science.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2023 - 2025</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <img src="/assets/sp-logo.jpeg" alt="Superpower" class="timeline-logo">
+              <div class="timeline-title-group">
+                <h3>Co-Founder</h3>
+                <p class="company">Superpower Social</p>
+              </div>
+            </div>
+            <p class="timeline-description">Built from 0 to 1 platform for brand-aligned moderation and auto-engagement. Developed/deployed self-improving prompt engine, online-SGD behavior prediction, and production RAG + inference stack.</p>
+            <div class="timeline-links">
+              <a href="/projects/superpower-social.html" class="timeline-link">Learn more</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2022</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <img src="/assets/nasdaq.jpg" alt="JHU" class="timeline-logo">
+              <div class="timeline-title-group">
+                <h3>Data Analytics Engineer</h3>
+                <p class="company">Nasdaq Data-Link</p>
+              </div>
+            </div>
+            <p class="timeline-description">Data analysis and visualization for marketing, product and DevOps teams.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2019 - 2023</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <img src="/assets/waterloo-logo.svg" alt="Waterloo" class="timeline-logo">
+              <div class="timeline-title-group">
+                <h3>Global Business Digital Art, Cognitive Science</h3>
+                <p class="company">University of Waterloo</p>
+              </div>
+            </div>
+            <p class="timeline-description">Interdisciplinary studies combining business, digital art, and cognitive science.</p>
+            <div class="timeline-links">
+              <a href="/projects/cogsci-projects.html" class="timeline-link">Pet Projects</a>
+              <a href="https://youtu.be/A70HwYscjO0" class="timeline-link external" target="_blank" rel="noreferrer noopener">Enhancing Cognitive Bandwidth (Video)</a>
+              <a href="https://youtu.be/hMDyhlg_PVI" class="timeline-link external" target="_blank" rel="noreferrer noopener">The Watching Portrait (Video)</a>
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2018 - 2024</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <img src="/assets/khaulass-logo.jpg" alt="Khaulass" class="timeline-logo">
+              <div class="timeline-title-group">
+                <h3>Co-Founder</h3>
+                <p class="company">Khaulass Clothing Brand</p>
+              </div>
+            </div>
+            <p class="timeline-description">A for-benefit business with the goal of sustainably supporting children in need.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <h2>Featured Projects</h2>
+      <div class="card-grid">
+        <article class="card">
+          <h3><a href="/projects/braintoken.html">BrainToken</a> <span class="badge">in progress</span></h3>
+          <p>Neural-to-text decoding via JEPA and perplexity-guided learning. Translates ECoG brain signals into natural language using soft prompts that condition a frozen LLM.</p>
+        </article>
+
+        <article class="card">
+          <h3><a href="/projects/superpower-social.html">Superpower Social</a></h3>
+          <p>Real-time social media interaction engine with two-pass architecture: fast logistic-regression on MiniLM embeddings for reply prediction, escalating to brand-aligned LLM generation. Reduces large-model inference by ~83%.</p>
+        </article>
+
+        <article class="card">
+          <h3><a href="/projects/brainlang.html">BrainLang</a></h3>
+          <p>Decoding heard language from fMRI into text space. Early versions explore BiLSTM + attention with dimensionality-reduced inputs and continuous decoding; current work expands training stability and evaluation.</p>
+        </article>
+
+
+        <article class="card">
+          <h3><a href="/projects/cogsci-projects.html">Pet Projects</a></h3>
+          <p>Foundational cognitive science models rebuilt from scratch: Hodgkin-Huxley dynamics, Hopfield networks, perceptron learning, delta rule, and damped oscillators. Understanding the primitives of signal, memory, and stability.</p>
+        </article>
+
+        <article class="card">
+          <h3><a href="/projects/kan-extreme-theory.html">Extreme Theory: Kolmogorov-Arnold Networks</a> <span class="badge">unpublished</span></h3>
+          <p>Rigorous theoretical framework applying extreme theory to KANs. Derives laws and predictions about interpretability, efficiency, and robustness from the axiomatic foundations of the Kolmogorov-Arnold representation theorem.</p>
+        </article>
+
+        <article class="card">
+          <h3><a href="/projects/voxdigit.html">VoxDigit</a></h3>
+          <p>Real-time spoken digit recognition with early-exit, few-shot enrollment, and interpretability. 99.7% accuracy on CPU with millisecond latency—built for practical, low-resource deployment.</p>
+        </article>
+
+        <article class="card">
+          <h3><a href="/projects/community-notes-sigreg.html">Community Notes + SIGReg</a> <span class="badge">in progress</span></h3>
+          <p>Isotropic Gaussian regularization for Community Notes matrix factorization. Adding Epps-Pulley test (O(n), bounded gradients) and random projection sketching for scalable, robust note scoring.</p>
+        </article>
+
+        <!-- hidden for now
+        <article class="card">
+          <h3><a href="/projects/psychedelic-dnn.html">Psychedelic DNN Perturbations</a> <span class="badge">research</span></h3>
+          <p>REBUS-based perturbations to CLIP models replicate human psilocybin fMRI deficits. Late transformer layers align with DMN activity, validating brain-DNN correspondence under altered states.</p>
+        </article>
+        -->
+      </div>
+      <p class="small" style="margin-top:10px"><a href="/projects/">Browse all projects →</a></p>
+    </section>
+
+    <section id="extras" class="prose">
+      <h2>Extras</h2>
+      <div class="extras-grid">
+        <article class="extra-item">
+          <h3>Enhancing Cognitive Bandwidth <span class="badge">video</span></h3>
+          <p>My undergrad thoughts on increasing HCI bitrate.</p>
+          <a href="https://youtu.be/A70HwYscjO0" class="external" target="_blank" rel="noreferrer noopener">Watch video</a>
+        </article>
+        <article class="extra-item">
+          <h3>The Watching Portrait <span class="badge">video</span></h3>
+          <p>A portrait I made of the dept. dean with animatronic eyes. Using a Raspberry Pi and OpenCV, it detects and tracks the faces of unsuspecting students passing by.</p>
+          <div><a href="https://youtu.be/hMDyhlg_PVI" class="external" target="_blank" rel="noreferrer noopener">Watch video</a> · <a href="https://docs.google.com/document/d/1XBajgKn0NhdXClZUzIobEMHKoaTPq2d8JhUYKO9IadY/edit?usp=sharing" class="external" target="_blank" rel="noreferrer noopener">Documentation</a></div>
+        </article>
+        <article class="extra-item">
+          <h3>Decoding Creativity <span class="badge">article</span></h3>
+          <p>My creative analysis on creativity, understanding, and the nexus of observation and artistic genius (featuring embarrassingly earnest undergrad philosophizing).</p>
+          <a href="https://medium.com/@riaddajani/decoding-creativity-the-nexus-of-observation-science-and-artistic-genius-9ce918bf0f11" class="external" target="_blank" rel="noreferrer noopener">Read on Medium</a>
+        </article>
+        <article class="extra-item">
+          <h3>Restoring Touch <span class="badge">article</span></h3>
+          <p>A paper I wrote during one of my cognitive science undergrad classes—early thoughts that make me cringe just a little bit now.</p>
+          <a href="https://medium.com/@riaddajani/restoring-touch-31bc0e6a21ff" class="external" target="_blank" rel="noreferrer noopener">Read on Medium</a>
+        </article>
+        <article class="extra-item">
+          <h3>MTG Card Compiler <span class="badge">project</span></h3>
+          <p>GPT-4 vision extracts card data from Magic: The Gathering photos—name, mana cost, types, rules text.</p>
+          <a href="https://colab.research.google.com/drive/1dLOynh0_N6xMGj9JT02kN_LJDudttuRU" class="external" target="_blank" rel="noreferrer noopener">Open in Colab</a>
+        </article>
+        <article class="extra-item">
+          <h3>text2tone <span class="badge">project</span></h3>
+          <p>Turn PG essays into audiobooks so I can code + listen.</p>
+          <a href="https://github.com/riaddajani/text2tone" class="external" target="_blank" rel="noreferrer noopener">View on GitHub</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p class="prose">Email <a href="mailto:rdajani2@jh.edu">rdajani2@jh.edu</a> · <a href="https://github.com/riaddajani" target="_blank" rel="noreferrer noopener">GitHub</a> · <a href="https://www.linkedin.com/in/riaddajani/" target="_blank" rel="noreferrer noopener">LinkedIn</a> · <a href="https://x.com/riaddajani" target="_blank" rel="noreferrer noopener">X/Twitter</a></p>
+      <p class="small">CV: coming soon.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      © 2025 Riad Dajani · Built with plain HTML/CSS · <a href="#top">Back to top</a>
+    </div>
+  </footer>
+
+</body>
+</html>

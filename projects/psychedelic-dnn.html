@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Psychedelic-Inspired DNN Perturbations — Riad Dajani</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <!-- KaTeX for LaTeX rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]
+    });"></script>
+  <style>
+    .formula-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .algorithm-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .algorithm-box h4 {
+      margin: 0 0 12px;
+      color: var(--link);
+    }
+    .algorithm-box table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .algorithm-box th, .algorithm-box td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .algorithm-box th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .algorithm-box tr:last-child td {
+      border-bottom: none;
+    }
+    .highlight-box {
+      background: color-mix(in oklab, var(--link) 10%, var(--bg));
+      border-left: 3px solid var(--link);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 10px 10px 0;
+    }
+    .highlight-box p {
+      margin: 0;
+    }
+    .result-box {
+      background: color-mix(in oklab, #22c55e 10%, var(--bg));
+      border-left: 3px solid #22c55e;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 10px 10px 0;
+    }
+    .result-box p {
+      margin: 0;
+    }
+    .section-divider {
+      text-align: center;
+      margin: 40px 0;
+      color: var(--muted);
+    }
+    .section-divider::before {
+      content: '• • •';
+      letter-spacing: 8px;
+    }
+    pre code {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
+    .katex-display {
+      margin: 16px 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    .results-table th, .results-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .results-table th {
+      background: var(--card);
+      font-weight: 600;
+    }
+    .results-table tr:nth-child(even) {
+      background: var(--card);
+    }
+    .figure {
+      margin: 24px 0;
+      text-align: center;
+    }
+    .figure img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .figure figcaption {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    .two-col-figures {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    @media (max-width: 760px) {
+      .two-col-figures {
+        grid-template-columns: 1fr;
+      }
+    }
+    .two-col-figures .figure {
+      margin: 0;
+    }
+    .metric-delta {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    .metric-positive {
+      color: #22c55e;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container inner">
+      <a class="brand" href="/">Riad Dajani</a>
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="/projects/">Projects</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container prose">
+    <h1>Psychedelic-Inspired DNN Perturbations <span class="badge">research</span></h1>
+    <p class="lead">Replicating human fMRI task performance deficits in CLIP models using REBUS-based computational interventions.</p>
+
+    <div class="highlight-box">
+      <p><strong>Key Finding:</strong> Applying psychedelic-inspired perturbations to CLIP produces (1) task performance deficits matching human behavioral data under psilocybin and (2) higher representational similarity between perturbed DNNs and human DMN activity.</p>
+    </div>
+
+    <h2>Motivation: Bridging Psychedelic Neuroscience and Deep Learning</h2>
+
+    <p>Psychedelics like psilocybin produce profound alterations in perception, cognition, and sense of self. Recent precision fMRI studies (Siegel et al., 2025) have characterized these effects at unprecedented resolution, revealing specific patterns of network disruption—particularly in the Default Mode Network (DMN).</p>
+
+    <p>A natural question arises: <em>Can we computationally replicate these effects in artificial neural networks?</em> If so, we gain:</p>
+
+    <ul>
+      <li><strong>Mechanistic insight</strong>: Test theories of psychedelic action in silico</li>
+      <li><strong>Model alignment</strong>: Better understand DNN-brain correspondence</li>
+      <li><strong>Cognitive enhancement</strong>: Explore perturbations that enhance creativity without impairing function</li>
+    </ul>
+
+    <h2>Theoretical Framework: The REBUS Model</h2>
+
+    <p>The <strong>Relaxed Beliefs Under Psychedelics (REBUS)</strong> model (Carhart-Harris & Friston, 2019) provides a unified account of psychedelic effects within the predictive processing framework. Under REBUS, psychedelics reduce the precision-weighting of high-level priors, "relaxing" top-down predictions and allowing bottom-up sensory signals greater influence.</p>
+
+    <div class="formula-block">
+      $$\text{Posterior} \propto \underbrace{\text{Likelihood}^{\uparrow}}_{\text{sensory input}} \times \underbrace{\text{Prior}^{\downarrow}}_{\text{relaxed beliefs}}$$
+    </div>
+
+    <p>I implemented REBUS as computational interventions on deep neural networks:</p>
+
+    <div class="algorithm-box">
+      <h4>REBUS → DNN Implementation Mapping</h4>
+      <table>
+        <tr>
+          <th>REBUS Mechanism</th>
+          <th>Neural Effect</th>
+          <th>DNN Implementation</th>
+        </tr>
+        <tr>
+          <td>Reduced prior precision</td>
+          <td>Relaxed high-level beliefs</td>
+          <td>Hierarchy-weighted noise: $\sigma_\ell \propto \ell / L$</td>
+        </tr>
+        <tr>
+          <td>Flattened energy landscape</td>
+          <td>Easier state transitions</td>
+          <td>Temperature scaling: $T > 1$</td>
+        </tr>
+        <tr>
+          <td>Liberated bottom-up flow</td>
+          <td>Enhanced sensory influence</td>
+          <td>Reduced early-layer perturbation</td>
+        </tr>
+        <tr>
+          <td>DMN disruption</td>
+          <td>Self-network desynchronization</td>
+          <td>Late-layer attention flattening</td>
+        </tr>
+        <tr>
+          <td>Enhanced criticality</td>
+          <td>Edge-of-chaos dynamics</td>
+          <td>$\sigma \to 1$ normalization</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Hierarchy-Weighted Noise Injection</h3>
+
+    <p>The core REBUS perturbation applies Gaussian noise with variance increasing across the layer hierarchy:</p>
+
+    <div class="formula-block">
+      $$\tilde{h}_\ell = h_\ell + \epsilon_\ell, \quad \epsilon_\ell \sim \mathcal{N}\left(0, \sigma_0^2 \cdot \left(\frac{\ell}{L}\right)^2\right)$$
+    </div>
+
+    <p>Where:</p>
+    <ul>
+      <li>$h_\ell$ = activation at layer $\ell$</li>
+      <li>$L$ = total number of layers</li>
+      <li>$\sigma_0$ = base noise intensity (calibrated to psilocybin dose)</li>
+    </ul>
+
+    <p>This ensures early layers (sensory processing) remain relatively intact while late layers (abstract representations, analogous to DMN) are maximally disrupted.</p>
+
+    <div class="section-divider"></div>
+
+    <h2>Experiment 1: Siegel fMRI Task Replication</h2>
+
+    <h3>Human Study Protocol</h3>
+
+    <p>Siegel et al. (2025) conducted precision functional mapping on 7 healthy volunteers under psilocybin (25mg) vs. methylphenidate (40mg) control. Participants performed an auditory-visual matching task requiring congruent/incongruent discrimination.</p>
+
+    <h3>DNN Replication</h3>
+
+    <p>I replicated this task paradigm using CLIP (ViT-B/32), presenting image-text pairs and measuring discrimination performance under baseline and PSIL (psilocybin-simulated) conditions:</p>
+
+    <pre><code>from deepjuice.psychedelic import CLIPPsychedelicSession
+
+session = CLIPPsychedelicSession(model, processor, intensity='moderate')
+
+# Run matched conditions
+baseline = session.run_fmri_task(stimuli, condition='baseline')
+psil = session.run_fmri_task(stimuli, condition='psil')</code></pre>
+
+    <h3>Results: Task Performance</h3>
+
+    <table class="results-table">
+      <tr>
+        <th>Condition</th>
+        <th>Accuracy</th>
+        <th>$d'$ (sensitivity)</th>
+        <th>Hit Rate</th>
+        <th>FA Rate</th>
+      </tr>
+      <tr>
+        <td><strong>Baseline</strong></td>
+        <td>95.83%</td>
+        <td>3.46</td>
+        <td>95.83%</td>
+        <td>4.17%</td>
+      </tr>
+      <tr>
+        <td><strong>PSIL (25mg)</strong></td>
+        <td>62.50%</td>
+        <td>0.64</td>
+        <td>58.33%</td>
+        <td>33.33%</td>
+      </tr>
+      <tr>
+        <td><strong>$\Delta$ (Change)</strong></td>
+        <td class="metric-delta">-33.33%</td>
+        <td class="metric-delta">-2.82</td>
+        <td class="metric-delta">-37.50%</td>
+        <td class="metric-delta">+29.17%</td>
+      </tr>
+    </table>
+
+    <div class="result-box">
+      <p><strong>Interpretation:</strong> PSIL simulation produces an 81.5% reduction in discriminability ($d'$: 3.46 → 0.64), consistent with human behavioral data showing impaired task performance during acute psilocybin (effect sizes $d = 0.65$–$0.85$ in the literature).</p>
+    </div>
+
+    <figure class="figure">
+      <img src="/assets/psychedelic/siegel_fmri_results.png" alt="Task performance comparison between baseline and PSIL conditions">
+      <figcaption>Figure 1: Task performance across baseline and PSIL conditions showing accuracy, sensitivity ($d'$), hit rates, and false alarm rates.</figcaption>
+    </figure>
+
+    <div class="section-divider"></div>
+
+    <h2>Experiment 2: Layer-wise Representational Analysis</h2>
+
+    <h3>Method: Representational Similarity Analysis (RSA)</h3>
+
+    <p>To understand <em>where</em> in the network PSIL perturbations have maximal effect, I computed representational distance matrices (RDMs) at each CLIP layer and measured baseline-PSIL correlation:</p>
+
+    <div class="formula-block">
+      $$\text{RDM}_{ij}^\ell = 1 - \frac{\mathbf{h}_i^\ell \cdot \mathbf{h}_j^\ell}{\|\mathbf{h}_i^\ell\| \|\mathbf{h}_j^\ell\|}$$
+    </div>
+
+    <p>The correlation between baseline and PSIL RDMs indicates how much the representational geometry changes at each layer.</p>
+
+    <h3>Results: Hierarchical Disruption Pattern</h3>
+
+    <table class="results-table">
+      <tr>
+        <th>Layer Group</th>
+        <th>Baseline-PSIL Correlation ($\rho$)</th>
+        <th>Interpretation</th>
+      </tr>
+      <tr>
+        <td><strong>Early (1-4)</strong></td>
+        <td>0.89–0.92</td>
+        <td>Minimal change (sensory intact)</td>
+      </tr>
+      <tr>
+        <td><strong>Middle (5-8)</strong></td>
+        <td>0.78–0.85</td>
+        <td>Moderate disruption</td>
+      </tr>
+      <tr>
+        <td><strong>Late (9-12)</strong></td>
+        <td class="metric-delta">0.56–0.67</td>
+        <td><strong>Maximum disruption (DMN-like)</strong></td>
+      </tr>
+    </table>
+
+    <div class="result-box">
+      <p><strong>Key Finding:</strong> Late layers (9-12) show ~50% representational change, analogous to DMN desynchronization observed in human fMRI under psilocybin. This validates the REBUS hierarchy-weighting approach.</p>
+    </div>
+
+    <figure class="figure">
+      <img src="/assets/psychedelic/rsa_layer_analysis.png" alt="Layer-wise RSA showing hierarchical disruption pattern">
+      <figcaption>Figure 2: Representational similarity between baseline and PSIL conditions across CLIP layers. Late layers show maximum disruption.</figcaption>
+    </figure>
+
+    <div class="section-divider"></div>
+
+    <h2>Experiment 3: Human-DNN RSA (DMN Comparison)</h2>
+
+    <h3>Hypothesis</h3>
+
+    <p>If PSIL-perturbed DNNs capture psychedelic neural dynamics, they should show <strong>higher representational similarity to human PSIL brain states</strong> specifically in DMN regions (mPFC, PCC, precuneus, angular gyrus).</p>
+
+    <h3>Method</h3>
+
+    <p>I loaded task fMRI data from OpenNeuro DS006072 (Siegel et al., 2025), extracted DMN vertices (~22,000 vertices), computed human DMN RDMs, and compared representational geometry with CLIP layer RDMs:</p>
+
+    <div class="formula-block">
+      $$\text{Geometry Distance} = \left\| \text{RDM}_{\text{human}}^{\text{DMN}} - \text{RDM}_{\text{CLIP}}^{\ell} \right\|_F$$
+    </div>
+
+    <h3>Results: DMN-Specific Alignment</h3>
+
+    <table class="results-table">
+      <tr>
+        <th>Brain Region</th>
+        <th>Best Matching CLIP Layer</th>
+        <th>Geometry Distance</th>
+      </tr>
+      <tr>
+        <td><strong>DMN (Full)</strong></td>
+        <td>Layer 12</td>
+        <td>49.43</td>
+      </tr>
+      <tr>
+        <td><strong>Precuneus</strong></td>
+        <td>Layer 11</td>
+        <td>52.17</td>
+      </tr>
+      <tr>
+        <td><strong>PCC</strong></td>
+        <td>Layer 12</td>
+        <td>48.91</td>
+      </tr>
+    </table>
+
+    <div class="result-box">
+      <p><strong>Key Finding:</strong> PSIL-perturbed CLIP's late layers (11-12) best predict human DMN activity under psilocybin, supporting the theoretical mapping between transformer attention layers and the brain's Default Mode Network.</p>
+    </div>
+
+    <figure class="figure">
+      <img src="/assets/psychedelic/human_dnn_rsa_dmn_precuneus.png" alt="Human-DNN RSA comparison for DMN regions">
+      <figcaption>Figure 3: Cross-modal RSA comparing human DMN representational geometry with CLIP layers under PSIL perturbation.</figcaption>
+    </figure>
+
+    <div class="section-divider"></div>
+
+    <h2>Perturbation Mechanism Analysis</h2>
+
+    <p>Beyond task performance, I validated that PSIL perturbations produce network-level changes consistent with psychedelic neuroscience:</p>
+
+    <div class="two-col-figures">
+      <figure class="figure">
+        <img src="/assets/psychedelic/entropy_comparison.png" alt="Entropy comparison">
+        <figcaption><strong>Entropy:</strong> PSIL increases representational entropy (entropic brain hypothesis)</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="/assets/psychedelic/connectivity_comparison.png" alt="Connectivity comparison">
+        <figcaption><strong>Modularity:</strong> PSIL reduces network modularity (desegregation)</figcaption>
+      </figure>
+    </div>
+
+    <div class="two-col-figures">
+      <figure class="figure">
+        <img src="/assets/psychedelic/criticality_comparison.png" alt="Criticality comparison">
+        <figcaption><strong>Criticality:</strong> PSIL pushes dynamics toward edge-of-chaos ($\sigma \to 1$)</figcaption>
+      </figure>
+      <figure class="figure">
+        <img src="/assets/psychedelic/creativity_comparison.png" alt="Creativity comparison">
+        <figcaption><strong>Creativity:</strong> PSIL increases novelty/flexibility while maintaining coherence</figcaption>
+      </figure>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <h2>Summary</h2>
+
+    <figure class="figure">
+      <img src="/assets/psychedelic/psychedelic_summary.png" alt="Summary of all psychedelic DNN findings">
+      <figcaption>Figure 4: Comprehensive summary of PSIL perturbation effects across metrics.</figcaption>
+    </figure>
+
+    <h3>Main Conclusions</h3>
+
+    <ol>
+      <li><strong>Task Performance Replication:</strong> PSIL-perturbed CLIP shows the same pattern of task impairment as humans under psilocybin (accuracy: 95.83% → 62.50%; $d'$: 3.46 → 0.64)</li>
+      <li><strong>Hierarchical Disruption:</strong> Late layers are selectively disrupted while early layers remain intact, matching REBUS model predictions</li>
+      <li><strong>DMN Alignment:</strong> PSIL-simulated DNN representations show strongest alignment with human DMN activity, validating the mapping between transformer attention and the brain's self-referential network</li>
+      <li><strong>Mechanistic Validity:</strong> Entropy, connectivity, and criticality metrics all shift in directions consistent with psychedelic neuroscience literature</li>
+    </ol>
+
+    <div class="highlight-box">
+      <p><strong>Implications:</strong> This work demonstrates that computational analogues of psychedelic effects can be faithfully implemented in DNNs, opening new avenues for in-silico psychedelic research and brain-DNN alignment studies.</p>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <h2>Implementation</h2>
+
+    <p>The full psychedelic module is implemented in <code>deepjuice/psychedelic/</code> with 9 computational mechanisms:</p>
+
+    <pre><code>from deepjuice.psychedelic import (
+    REBUSPerturbation,           # Hierarchy-weighted noise
+    CriticalityController,        # Edge-of-chaos dynamics
+    DMNDisruptor,                # Late-layer attention flattening
+    GlobalWorkspace,             # Competitive integration bottleneck
+    QualityDiversityOptimizer,   # MAP-Elites archive
+    LatentInhibitionController,  # Reduced familiar filtering
+    PlasticityCascade,           # Temporal phase dynamics
+    ReceptorCascade,             # 5-HT2A signaling analogue
+    VerbalizedSampler,           # Training-free diversity
+)</code></pre>
+
+    <h2>Data Sources</h2>
+
+    <ul>
+      <li><strong>Human fMRI:</strong> <a href="https://openneuro.org/datasets/ds006072" target="_blank" rel="noreferrer noopener" class="external">OpenNeuro DS006072</a> (Siegel et al., 2025)</li>
+      <li><strong>DNN Model:</strong> CLIP ViT-B/32 (OpenAI)</li>
+      <li><strong>Extraction:</strong> DeepJuice feature extraction framework</li>
+    </ul>
+
+    <h2>References</h2>
+
+    <ol>
+      <li>Carhart-Harris, R. L., & Friston, K. J. (2019). REBUS and the anarchic brain: Toward a unified model of the brain action of psychedelics. <em>Pharmacological Reviews</em>, 71(3), 316-344.</li>
+      <li>Siegel, J. S., et al. (2025). Psilocybin's acute and persistent brain effects: A precision imaging drug trial. <em>Scientific Data</em>, 12:941. <a href="https://doi.org/10.1038/s41597-025-05189-0" target="_blank" rel="noreferrer noopener" class="external">DOI</a></li>
+      <li>Tagliazucchi, E., et al. (2016). Increased global functional connectivity correlates with LSD-induced ego dissolution. <em>Current Biology</em>, 26(8), 1043-1050.</li>
+      <li>Schartner, M. M., et al. (2017). Increased spontaneous MEG signal diversity for psychoactive doses of ketamine, LSD and psilocybin. <em>Scientific Reports</em>, 7, 46421.</li>
+      <li>Daws, R. E., et al. (2022). Increased global integration in the brain after psilocybin therapy for depression. <em>Nature Medicine</em>, 28(4), 844-851.</li>
+    </ol>
+  </main>
+
+  <footer>
+    <div class="container">© 2025 Riad Dajani</div>
+  </footer>
+</body>
+</html>
